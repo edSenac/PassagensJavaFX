@@ -1,7 +1,7 @@
 package dominio;
 
 /**
- * @author lhries
+ * @author Eduardo
  */
 public class Aviao {
     private int id;

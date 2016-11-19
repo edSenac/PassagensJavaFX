@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" fx:id="painelSelecao" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PainelSelecaoController">
+   <children>
+      <Button layoutX="134.0" layoutY="150.0" mnemonicParsing="false" onAction="#abreClientes" text="Menu de Clientes" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button layoutX="321.0" layoutY="150.0" mnemonicParsing="false" onAction="#abreAvioes" text="Menu de Aviões" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button layoutX="145.0" layoutY="234.0" mnemonicParsing="false" onAction="#abreVoos" text="Menu de Voos" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button layoutX="318.0" layoutY="234.0" mnemonicParsing="false" onAction="#abreVendas" text="Menu de Vendas" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Label layoutX="133.0" layoutY="58.0" prefHeight="41.0" prefWidth="335.0" text="Venda de Passagens Aéreas">
+         <font>
+            <Font size="27.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

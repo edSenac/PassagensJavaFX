@@ -16,7 +16,7 @@ public class Passagens extends Application  {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/view/PainelTabelaAviao.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/view/PainelSelecao.fxml"));
         
         Scene scene = new Scene(root);
         
