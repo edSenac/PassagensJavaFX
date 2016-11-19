@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="painelTabelaAviao" prefHeight="350.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AviaoController">
-   <children>
+    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
           <Button mnemonicParsing="false" onAction="#tratarBotaoCadastrar" text="Cadastrar" />
@@ -25,5 +25,5 @@
             <TableColumn fx:id="tableColumnAssentos" prefWidth="215.0" text="Número de Assentos" />
         </columns>
       </TableView>
-   </children>
+    </children>
 </VBox>

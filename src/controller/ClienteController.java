@@ -86,7 +86,7 @@ public class ClienteController implements Initializable {
     public void tratarBotaoCadastrar(ActionEvent event) throws IOException {
         clienteSelecionado = null;
         Stage stage = new Stage();
-        Parent root = FXMLLoader.load(Passagens.class.getResource("view/PainelFormularioCliente.fxml"));
+        Parent root = FXMLLoader.load(Passagens.class.getResource("/view/PainelFormularioCliente.fxml"));
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(painelTabelaCliente.getScene().getWindow());
@@ -98,7 +98,7 @@ public class ClienteController implements Initializable {
     public void tratarBotaoEditar(ActionEvent event) throws IOException {
         Cliente clienteSelec = tableViewClientes.getSelectionModel().getSelectedItem();
         if (clienteSelec != null) {
-            FXMLLoader loader = new FXMLLoader(Passagens.class.getResource("view/PainelFormularioCliente.fxml"));
+            FXMLLoader loader = new FXMLLoader(Passagens.class.getResource("/view/PainelFormularioCliente.fxml"));
             Parent root = (Parent) loader.load();
 
             ClienteController controller = (ClienteController) loader.getController();
@@ -139,8 +139,8 @@ public class ClienteController implements Initializable {
             try {
                 clienteNegocio.salvar(
                     new Cliente(
-                        textFieldRg.getText(), 
-                        textFieldNome.getText(), 
+                        textFieldNome.getText(),
+                        textFieldRg.getText(),
                         textFieldTelefone.getText()
                     )
                 );

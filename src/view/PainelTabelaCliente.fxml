@@ -7,9 +7,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClienteController">
+<VBox fx:id="painelTabelaCliente" prefHeight="350.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClienteController">
     <children>
-      <ToolBar prefHeight="40.0" prefWidth="200.0">
+      <ToolBar prefHeight="40.0" prefWidth="420.0">
         <items>
           <Button mnemonicParsing="false" onAction="#tratarBotaoCadastrar" text="Cadastrar" />
             <Button mnemonicParsing="false" onAction="#tratarBotaoEditar" text="Editar" />
@@ -19,13 +19,13 @@
             <Insets />
          </VBox.margin>
       </ToolBar>
-      <TableView fx:id="tableViewPacientes" prefHeight="314.0" prefWidth="420.0">
+      <TableView fx:id="tableViewClientes" layoutY="38.0" prefHeight="314.0" prefWidth="420.0">
         <columns>
           <TableColumn fx:id="tableColumnRg" prefWidth="113.0" text="RG" />
           <TableColumn fx:id="tableColumnNome" prefWidth="189.0" text="Nome" />
-            <TableColumn fx:id="tableColumnTelefone" prefWidth="111.0" text="Telefone" />
+            <TableColumn fx:id="tableColumnTelefone" prefWidth="117.0" text="Telefone" />
         </columns>
       </TableView>
    </children>
 
-</AnchorPane>
+</VBox>

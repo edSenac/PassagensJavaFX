@@ -37,26 +37,34 @@ public class PainelSelecaoController implements Initializable {
         // TODO
     }    
 
-    public void abreClientes(ActionEvent event) throws IOException {
-        System.out.println("Abrindo Clientes");
-    }
-    
-    public void abreAvioes(ActionEvent event) throws IOException {
-        System.out.println("Abrindo Avioes");
+    private void abrePainel(String painel) throws IOException {
         Stage stage = new Stage();
-        Parent root = FXMLLoader.load(Passagens.class.getResource("/view/PainelTabelaAviao.fxml"));
+        Parent root = FXMLLoader.load(Passagens.class.getResource(painel));
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(painelSelecao.getScene().getWindow());
         stage.showAndWait();
     }
     
+    public void abreClientes(ActionEvent event) throws IOException {
+        System.out.println("Abrindo Clientes");
+        abrePainel("/view/PainelTabelaCliente.fxml");
+    }
+    
+    public void abreAvioes(ActionEvent event) throws IOException {
+        System.out.println("Abrindo Avioes");
+        abrePainel("/view/PainelTabelaAviao.fxml");
+        
+    }
+    
     public void abreVoos(ActionEvent event) throws IOException {
         System.out.println("Abrindo Voos");
+        abrePainel("/view/PainelTabelaVoo.fxml");
     }
     
     public void abreVendas(ActionEvent event) throws IOException {
         System.out.println("Abrindo Vendas");
+        abrePainel("/view/PainelTabelaVenda.fxml");
     }
     
 }

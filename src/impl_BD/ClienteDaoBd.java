@@ -97,8 +97,8 @@ public class ClienteDaoBd extends DaoBd<Cliente> implements ClienteDao{
                 String nome = resultado.getString("nome");
                 String telefone = resultado.getString("telefone");
                 
-                Cliente cliente = new Cliente(id, nome, rg, telefone);
-                
+                Cliente cliente = new Cliente(id, nome, rg, telefone);                
+
                 listaClientes.add(cliente);
             }
         }catch(SQLException ex){
