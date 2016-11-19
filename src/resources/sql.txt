@@ -1,0 +1,7 @@
+CREATE TABLE aviao
+(
+  id_aviao integer NOT NULL DEFAULT nextval('aviao_id_aviao_seq'::regclass),
+  nome character varying,
+  assentos integer,
+  CONSTRAINT "aviaoPkey" PRIMARY KEY (id_aviao)
+)
