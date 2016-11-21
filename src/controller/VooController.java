@@ -5,16 +5,22 @@
  */
 package controller;
 
+import dominio.Aviao;
 import main.Passagens;
 import dominio.Voo;
 import dominio.Voo;
+import impl_BD.AviaoDaoBd;
 import negocio.NegocioException;
 import negocio.VooNegocio;
 import view.PrintUtil;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +29,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -31,6 +38,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -42,60 +50,95 @@ public class VooController implements Initializable {
     @FXML
     private VBox painelTabelaVoo;
     @FXML
-    private TableView<Voo> tableViewAvioes;
+    private TableView<Voo> tableViewVoos;
     @FXML
-    private TableColumn<Voo, String> tableColumnNome;
+    private TableColumn<Voo, String> tableColumnOrigem;
     @FXML
-    private TableColumn<Voo, String> tableColumnAssentos;
+    private TableColumn<Voo, String> tableColumnDestino;
+    @FXML
+    private TableColumn<Voo, String> tableColumnHorario;
+    @FXML
+    private TableColumn<Voo, String> tableColumnAviao;
+    @FXML
+    private TableColumn<Voo, String> tableColumnLugares;
     @FXML
     private AnchorPane painelFormularioVoo;
     @FXML
-    private TextField textFieldNome;
+    private TextField textFieldOrigem;
     @FXML
-    private TextField textFieldAssentos;
+    private TextField textFieldDestino;
+    @FXML
+    private TextField textFieldHorario;
+    @FXML
+    private ChoiceBox choiceBoxAviao;
     
-    private List<Voo> listaAvioes;
+    private List<Voo> listaVoos;
     private Voo vooSelecionado;
 
-    private ObservableList<Voo> observableListaAvioes;
+    private ObservableList<Voo> observableListaVoos;
     private VooNegocio vooNegocio;
 
+    private AviaoDaoBd aviaoDao;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         vooNegocio = new VooNegocio();
 
         //Codigo meio redundante - por isso as vezes é melhor um controller para cada view 
-        if (tableViewAvioes != null) {
-            carregarTableViewAvioes();
+        if (tableViewVoos != null) {
+            carregarTableViewVoos();
         }
 
     }        
 
-    private void carregarTableViewAvioes() {
-        tableColumnAssentos.setCellValueFactory(new PropertyValueFactory<>("assentos"));
-        tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
+    private void carregarTableViewVoos() {
+        tableColumnOrigem.setCellValueFactory(new PropertyValueFactory<>("origem"));
+        tableColumnDestino.setCellValueFactory(new PropertyValueFactory<>("destino"));
+        tableColumnHorario.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Voo, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
+                        final Voo voo = cell.getValue();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
+                        final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(dateFormat.format(voo.getHorario()));
+                        return simpleObject;
+                    }
+                });
+        // mostrar nome do aviao
+        /*tableColumnAviao.setCelValueFactory(new Callback<TableColumn.CellDataFeatures<Voo, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
+                        final Voo voo = cell.getValue();
+                        final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(voo.getAviao().getNome());
+                        return simpleObject;
+                    }
+        });*/
+        
+        tableColumnLugares.setCellValueFactory(new PropertyValueFactory<>("lugares"));
+        listaVoos = vooNegocio.listar();
 
-        //listaAvioes = vooNegocio.listar();
-
-        observableListaAvioes = FXCollections.observableArrayList(listaAvioes);
-        tableViewAvioes.setItems(observableListaAvioes);
+        observableListaVoos = FXCollections.observableArrayList(listaVoos);
+        tableViewVoos.setItems(observableListaVoos);
     }
 
     @FXML
     public void tratarBotaoCadastrar(ActionEvent event) throws IOException {
         vooSelecionado = null;
+        choiceBoxAviao = new ChoiceBox();
+        choiceBoxAviao.setItems(
+                FXCollections.observableArrayList(
+                    aviaoDao.listar()
+                )
+        );
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(Passagens.class.getResource("/view/PainelFormularioVoo.fxml"));
         stage.setScene(new Scene(root));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(painelTabelaVoo.getScene().getWindow());
         stage.showAndWait();
-        carregarTableViewAvioes();
+        carregarTableViewVoos();
     }
 
     @FXML
     public void tratarBotaoEditar(ActionEvent event) throws IOException {
-        Voo vooSelec = tableViewAvioes.getSelectionModel().getSelectedItem();
+        Voo vooSelec = tableViewVoos.getSelectionModel().getSelectedItem();
         if (vooSelec != null) {
             FXMLLoader loader = new FXMLLoader(Passagens.class.getResource("/view/PainelFormularioVoo.fxml"));
             Parent root = (Parent) loader.load();
@@ -108,7 +151,7 @@ public class VooController implements Initializable {
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(painelTabelaVoo.getScene().getWindow());
             dialogStage.showAndWait();
-            carregarTableViewAvioes();
+            carregarTableViewVoos();
         } else {
             PrintUtil.printMessageError("Precisa selecionar um voo para esta opcao");
         }
@@ -116,14 +159,14 @@ public class VooController implements Initializable {
 
     @FXML
     public void tratarBotaoRemover(ActionEvent event) throws IOException {
-        Voo vooSelec = tableViewAvioes.getSelectionModel().getSelectedItem();
+        Voo vooSelec = tableViewVoos.getSelectionModel().getSelectedItem();
         if (vooSelec != null) {
-            /*try {
+            try {
                 vooNegocio.deletar(vooSelec);
-                this.carregarTableViewAvioes();
+                this.carregarTableViewVoos();
             } catch (NegocioException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
-            }*/
+            }
         } else {
             PrintUtil.printMessageError("Precisa selecionar um voo para esta opcao");
         }
@@ -136,27 +179,37 @@ public class VooController implements Initializable {
         if(vooSelecionado == null) //Se for cadastrar
         {
             /*try {
-                vooNegocio.salvar(new Voo(
-                        textFieldNome.getText(), 
-                        Integer.parseInt(textFieldAssentos.getText())
-                ));                
+                
+                String origem = textFieldOrigem.getText();
+                String destino = textFieldDestino.getText();
+                // pegar horario pela classe paciente
+                //Date horario = textFieldHorario.getText();
+                // pegar aviao por id/nome
+                //int idAviao = choiceBoxAviao.getValue();
+                String nomeAviao = choiceBoxAviao.getSelectionModel().getSelectedItem().toString();
+                // pegar lugares pelo aviao
+                Aviao a = aviaoDao.procurarPorNome(nomeAviao);
+                
+                //vooNegocio.salvar(new Voo(origem, destino, horario, a, a.getAssentos()));
+                
                 stage.close();
             } catch (NegocioException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
-            }
-            */
+            }*/
+            
         }
         else //Se for editar
-        {/*
+        {
             try {
-                vooSelecionado.setNome(textFieldNome.getText());
-                vooSelecionado.setAssentos(Integer.parseInt(textFieldAssentos.getText()));
+                vooSelecionado.setOrigem(textFieldOrigem.getText());
+                vooSelecionado.setOrigem(textFieldDestino.getText());
+                vooSelecionado.setOrigem(textFieldHorario.getText());
+                //vooSelecionado.setAviao(Aviao a = aviaoDao.procurarPorNome(choiceBoxAviao.getValue()));
                 vooNegocio.atualizar(vooSelecionado);
                 stage.close();
             } catch (NegocioException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
             }
-*/
             
         } 
     }

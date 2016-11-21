@@ -13,10 +13,10 @@ public class AviaoNegocio {
         aviaoDao = new AviaoDaoBd();
     }
 
-    public void salvar(Aviao p) throws NegocioException {
-        this.validarCamposObrigatorios(p);
-        this.validarNomeExistente(p);
-        aviaoDao.salvar(p);
+    public void salvar(Aviao a) throws NegocioException {
+        this.validarCamposObrigatorios(a);
+        this.validarNomeExistente(a);
+        aviaoDao.salvar(a);
     }
 
     public List<Aviao> listar() {
@@ -54,18 +54,18 @@ public class AviaoNegocio {
         return (aviao != null);
     }
 
-    private void validarCamposObrigatorios(Aviao p) throws NegocioException {
-        if (p.getAssentos() <= 0) {
+    private void validarCamposObrigatorios(Aviao a) throws NegocioException {
+        if (a.getAssentos() <= 0) {
             throw new NegocioException("Numero de assentos nao informado");
         }
 
-        if (p.getNome() == null || p.getNome().isEmpty()) {
+        if (a.getNome() == null || a.getNome().isEmpty()) {
             throw new NegocioException("Nome nao informado");
         }
     }
 
-    private void validarNomeExistente(Aviao p) throws NegocioException {
-        if (aviaoExiste(p.getNome())) {
+    private void validarNomeExistente(Aviao a) throws NegocioException {
+        if (aviaoExiste(a.getNome())) {
             throw new NegocioException("Nome ja existente");
         }
     }
