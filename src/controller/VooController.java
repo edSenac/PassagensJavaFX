@@ -8,13 +8,14 @@ package controller;
 import dominio.Aviao;
 import main.Passagens;
 import dominio.Voo;
-import dominio.Voo;
 import impl_BD.AviaoDaoBd;
 import negocio.NegocioException;
 import negocio.VooNegocio;
 import view.PrintUtil;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -70,7 +71,9 @@ public class VooController implements Initializable {
     @FXML
     private TextField textFieldHorario;
     @FXML
-    private ChoiceBox choiceBoxAviao;
+    private TextField textFieldAviao;
+    @FXML
+    private ComboBox<String> comboBoxAviao;
     
     private List<Voo> listaVoos;
     private Voo vooSelecionado;
@@ -103,13 +106,13 @@ public class VooController implements Initializable {
                     }
                 });
         // mostrar nome do aviao
-        /*tableColumnAviao.setCelValueFactory(new Callback<TableColumn.CellDataFeatures<Voo, String>, ObservableValue<String>>() {
+        tableColumnAviao.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Voo, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
                         final Voo voo = cell.getValue();
                         final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(voo.getAviao().getNome());
                         return simpleObject;
                     }
-        });*/
+        });
         
         tableColumnLugares.setCellValueFactory(new PropertyValueFactory<>("lugares"));
         listaVoos = vooNegocio.listar();
@@ -120,13 +123,11 @@ public class VooController implements Initializable {
 
     @FXML
     public void tratarBotaoCadastrar(ActionEvent event) throws IOException {
+        System.out.println("botao cadastrar");
         vooSelecionado = null;
-        choiceBoxAviao = new ChoiceBox();
-        choiceBoxAviao.setItems(
-                FXCollections.observableArrayList(
-                    aviaoDao.listar()
-                )
-        );
+        
+        //comboBoxAviao.setItems();
+        
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(Passagens.class.getResource("/view/PainelFormularioVoo.fxml"));
         stage.setScene(new Scene(root));
@@ -178,36 +179,44 @@ public class VooController implements Initializable {
         
         if(vooSelecionado == null) //Se for cadastrar
         {
-            /*try {
+            try {
                 
                 String origem = textFieldOrigem.getText();
                 String destino = textFieldDestino.getText();
-                // pegar horario pela classe paciente
-                //Date horario = textFieldHorario.getText();
-                // pegar aviao por id/nome
-                //int idAviao = choiceBoxAviao.getValue();
-                String nomeAviao = choiceBoxAviao.getSelectionModel().getSelectedItem().toString();
-                // pegar lugares pelo aviao
-                Aviao a = aviaoDao.procurarPorNome(nomeAviao);
                 
-                //vooNegocio.salvar(new Voo(origem, destino, horario, a, a.getAssentos()));
+                DateFormat format = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
+                Date horario = format.parse(textFieldHorario.getText());
+                
+                // pegar aviao por id
+                int idAviao = Integer.parseInt(textFieldAviao.getText());
+                Aviao a = aviaoDao.procurarPorId(idAviao);
+                // pegar aviao por nome
+                //String nomeAviao = comboBoxAviao.getSelectionModel().getSelectedItem();
+                //Aviao a = aviaoDao.procurarPorNome(nomeAviao);
+                
+                
+                vooNegocio.salvar(new Voo(origem, destino, horario, a, a.getAssentos()));
                 
                 stage.close();
-            } catch (NegocioException ex) {
+            } catch (NegocioException | ParseException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
-            }*/
+            }
             
         }
         else //Se for editar
         {
             try {
                 vooSelecionado.setOrigem(textFieldOrigem.getText());
-                vooSelecionado.setOrigem(textFieldDestino.getText());
-                vooSelecionado.setOrigem(textFieldHorario.getText());
-                //vooSelecionado.setAviao(Aviao a = aviaoDao.procurarPorNome(choiceBoxAviao.getValue()));
+                vooSelecionado.setDestino(textFieldDestino.getText());
+                DateFormat format = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
+                Date horario = format.parse(textFieldHorario.getText());
+                vooSelecionado.setHorario(horario);
+                // 
+                //vooSelecionado.setAviao(Aviao a = aviaoDao.procurarPorNome(comboBoxAviao.getValue()));
+                vooSelecionado.setAviao(aviaoDao.procurarPorId(Integer.parseInt(textFieldAviao.getText())));
                 vooNegocio.atualizar(vooSelecionado);
                 stage.close();
-            } catch (NegocioException ex) {
+            } catch (NegocioException | ParseException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
             }
             
@@ -227,7 +236,9 @@ public class VooController implements Initializable {
 
     public void setVooSelecionado(Voo vooSelecionado) {
         this.vooSelecionado = vooSelecionado;
-        /*textFieldNome.setText(vooSelecionado.getNome());
-        textFieldAssentos.setText(String.valueOf(vooSelecionado.getAssentos()));*/
+        textFieldOrigem.setText(vooSelecionado.getOrigem());
+        textFieldDestino.setText(vooSelecionado.getDestino());
+        textFieldHorario.setText(vooSelecionado.getHorario().toString());
+        textFieldAviao.setText(String.valueOf(vooSelecionado.getAviao().getId()));
     }    
 }

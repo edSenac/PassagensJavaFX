@@ -146,7 +146,35 @@ public class AviaoDaoBd extends DaoBd<Aviao> implements AviaoDao {
 
         return (null);
     }
+    
+    public List<String> listarNomes() {
+        List<String> listaNomes = new ArrayList<>();
 
+        String sql = "SELECT nome FROM aviao";
+
+        try {
+            conectar(sql);
+
+            ResultSet resultado = comando.executeQuery();
+
+            while (resultado.next()) {
+                String nome = resultado.getString("nome");
+
+                listaNomes.add(nome);
+
+            }
+
+        } catch (SQLException ex) {
+            System.err.println("Erro de Sistema - Problema ao buscar os avioes do Banco de Dados!");
+            System.err.println(ex.getMessage());
+            throw new RuntimeException(ex);
+        } finally {
+            fecharConexao();
+        }
+
+        return (listaNomes);
+    }
+    
     @Override
     public Aviao procurarPorNome(String nome) {
         String sql = "SELECT * FROM aviao WHERE nome = ?";

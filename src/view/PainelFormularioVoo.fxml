@@ -24,12 +24,13 @@
          <children>
             <Label text="Origem:" />
             <Label text="Destino:" GridPane.rowIndex="1" />
-            <Label text="Horario:" GridPane.rowIndex="3" />
+            <Label text="Horario:" GridPane.rowIndex="2" />
             <TextField fx:id="textFieldOrigem" GridPane.columnIndex="1" />
             <TextField fx:id="textFieldDestino" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="textFieldHorario" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Avião:" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="choiceBoxAviao" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="textFieldHorario" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Avião:" GridPane.rowIndex="3" />
+            <!--ComboBox fx:id="comboBoxAviao" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" /-->
+            <TextField fx:id="textFieldAviao" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <Group AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
