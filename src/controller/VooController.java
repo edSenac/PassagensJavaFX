@@ -5,6 +5,7 @@
  */
 package controller;
 
+import dao.AviaoDao;
 import dominio.Aviao;
 import main.Passagens;
 import dominio.Voo;
@@ -47,7 +48,7 @@ import javafx.util.Callback;
  * @author 631620220
  */
 public class VooController implements Initializable {
-    
+
     @FXML
     private VBox painelTabelaVoo;
     @FXML
@@ -65,55 +66,63 @@ public class VooController implements Initializable {
     @FXML
     private AnchorPane painelFormularioVoo;
     @FXML
+    private ComboBox<Aviao> comboBoxAviao;
+    @FXML
     private TextField textFieldOrigem;
     @FXML
     private TextField textFieldDestino;
     @FXML
     private TextField textFieldHorario;
-    @FXML
-    private TextField textFieldAviao;
-    @FXML
-    private ComboBox<String> comboBoxAviao;
-    
+
+    /*@FXML
+    private TextField textFieldAviao;*/
     private List<Voo> listaVoos;
     private Voo vooSelecionado;
 
     private ObservableList<Voo> observableListaVoos;
     private VooNegocio vooNegocio;
 
-    private AviaoDaoBd aviaoDao;
-    
+    private AviaoDao aviaoDao;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         vooNegocio = new VooNegocio();
+        aviaoDao = new AviaoDaoBd();
+        
+        
+        if(painelFormularioVoo != null){
+            comboBoxAviao.setEditable(true);
+            comboBoxAviao.setConverter(new AviaoConverter());
+            comboBoxAviao.getItems().addAll(aviaoDao.listar());
+        }
 
         //Codigo meio redundante - por isso as vezes é melhor um controller para cada view 
         if (tableViewVoos != null) {
             carregarTableViewVoos();
         }
 
-    }        
+    }
 
     private void carregarTableViewVoos() {
         tableColumnOrigem.setCellValueFactory(new PropertyValueFactory<>("origem"));
         tableColumnDestino.setCellValueFactory(new PropertyValueFactory<>("destino"));
         tableColumnHorario.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Voo, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
-                        final Voo voo = cell.getValue();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
-                        final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(dateFormat.format(voo.getHorario()));
-                        return simpleObject;
-                    }
-                });
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
+                final Voo voo = cell.getValue();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
+                final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(dateFormat.format(voo.getHorario()));
+                return simpleObject;
+            }
+        });
         // mostrar nome do aviao
         tableColumnAviao.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Voo, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
-                        final Voo voo = cell.getValue();
-                        final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(voo.getAviao().getNome());
-                        return simpleObject;
-                    }
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Voo, String> cell) {
+                final Voo voo = cell.getValue();
+                final SimpleObjectProperty<String> simpleObject = new SimpleObjectProperty(voo.getAviao().getNome());
+                return simpleObject;
+            }
         });
-        
+
         tableColumnLugares.setCellValueFactory(new PropertyValueFactory<>("lugares"));
         listaVoos = vooNegocio.listar();
 
@@ -125,9 +134,8 @@ public class VooController implements Initializable {
     public void tratarBotaoCadastrar(ActionEvent event) throws IOException {
         System.out.println("botao cadastrar");
         vooSelecionado = null;
-        
+
         //comboBoxAviao.setItems();
-        
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(Passagens.class.getResource("/view/PainelFormularioVoo.fxml"));
         stage.setScene(new Scene(root));
@@ -176,34 +184,32 @@ public class VooController implements Initializable {
     @FXML
     public void tratarBotaoSalvar(ActionEvent event) throws IOException {
         Stage stage = (Stage) painelFormularioVoo.getScene().getWindow();
-        
-        if(vooSelecionado == null) //Se for cadastrar
+
+        if (vooSelecionado == null) //Se for cadastrar
         {
             try {
-                
+
                 String origem = textFieldOrigem.getText();
                 String destino = textFieldDestino.getText();
-                
+
                 DateFormat format = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
                 Date horario = format.parse(textFieldHorario.getText());
-                
+
                 // pegar aviao por id
-                int idAviao = Integer.parseInt(textFieldAviao.getText());
-                Aviao a = aviaoDao.procurarPorId(idAviao);
+                //int idAviao = Integer.parseInt(textFieldAviao.getText());
+                //Aviao a = aviaoDao.procurarPorId(idAviao);
                 // pegar aviao por nome
-                //String nomeAviao = comboBoxAviao.getSelectionModel().getSelectedItem();
+                Aviao a = comboBoxAviao.getValue();
                 //Aviao a = aviaoDao.procurarPorNome(nomeAviao);
-                
-                
+
                 vooNegocio.salvar(new Voo(origem, destino, horario, a, a.getAssentos()));
-                
+
                 stage.close();
             } catch (NegocioException | ParseException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
             }
-            
-        }
-        else //Se for editar
+
+        } else //Se for editar
         {
             try {
                 vooSelecionado.setOrigem(textFieldOrigem.getText());
@@ -211,16 +217,17 @@ public class VooController implements Initializable {
                 DateFormat format = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
                 Date horario = format.parse(textFieldHorario.getText());
                 vooSelecionado.setHorario(horario);
-                // 
-                //vooSelecionado.setAviao(Aviao a = aviaoDao.procurarPorNome(comboBoxAviao.getValue()));
-                vooSelecionado.setAviao(aviaoDao.procurarPorId(Integer.parseInt(textFieldAviao.getText())));
+
+                //Aviao a = comboBoxAviao.getValue();
+                vooSelecionado.setAviao(comboBoxAviao.getValue());
+                //vooSelecionado.setAviao(aviaoDao.procurarPorId(Integer.parseInt(textFieldAviao.getText())));
                 vooNegocio.atualizar(vooSelecionado);
                 stage.close();
             } catch (NegocioException | ParseException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
             }
-            
-        } 
+
+        }
     }
 
     @FXML
@@ -239,6 +246,7 @@ public class VooController implements Initializable {
         textFieldOrigem.setText(vooSelecionado.getOrigem());
         textFieldDestino.setText(vooSelecionado.getDestino());
         textFieldHorario.setText(vooSelecionado.getHorario().toString());
-        textFieldAviao.setText(String.valueOf(vooSelecionado.getAviao().getId()));
-    }    
+        //textFieldAviao.setText(String.valueOf(vooSelecionado.getAviao().getId()));
+        comboBoxAviao.setValue(vooSelecionado.getAviao());
+    }
 }

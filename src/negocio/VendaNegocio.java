@@ -23,7 +23,13 @@ public class VendaNegocio {
     
     public void salvar(Venda v) throws NegocioException {
         this.validarCamposObrigatorios(v);
-        vendaDao.salvar(v);
+        if(v.getVoo().getLugares() == 0) {
+            System.out.println("Lugares no voo:");
+            System.out.println(v.getVoo().getLugares());
+            throw new NegocioException("Nao tem mais lugares no voo");
+        }else{
+            vendaDao.salvar(v);
+        }
     }
     
     public List<Venda> listar(){

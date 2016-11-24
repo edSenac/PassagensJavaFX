@@ -6,8 +6,10 @@
 package controller;
 
 import dominio.Aviao;
+import dominio.Cliente;
 import main.Passagens;
 import dominio.Venda;
+import dominio.Voo;
 import impl_BD.ClienteDaoBd;
 import impl_BD.VendaDaoBd;
 import impl_BD.VooDaoBd;
@@ -66,9 +68,6 @@ public class VendaController implements Initializable {
     private TextField textFieldCliente;
     @FXML
     private TextField textFieldVoo;
-    @FXML
-    private TextField textFieldHorario;
-
     
     private List<Venda> listaVendas;
     private Venda vendaSelecionada;
@@ -83,6 +82,7 @@ public class VendaController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         vendaNegocio = new VendaNegocio();
+        
 
         //Codigo meio redundante - por isso as vezes é melhor um controller para cada view 
         if (tableViewVendas != null) {
@@ -92,6 +92,7 @@ public class VendaController implements Initializable {
     }        
 
     private void carregarTableViewVendas() {
+        // carrega nome do cliente
         tableColumnCliente.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Venda, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<Venda, String> cell) {
                         final Venda venda = cell.getValue();
@@ -99,6 +100,7 @@ public class VendaController implements Initializable {
                         return simpleObject;
                     }
         });
+        // carrega id do voo, melhor mostrar origem e destino?
         tableColumnVoo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Venda, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<Venda, String> cell) {
                         final Venda venda = cell.getValue();
@@ -106,6 +108,7 @@ public class VendaController implements Initializable {
                         return simpleObject;
                     }
         });
+        // carrega o horario que foi feita a venda
         tableColumnHorario.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Venda, String>, ObservableValue<String>>() {
                     public ObservableValue<String> call(TableColumn.CellDataFeatures<Venda, String> cell) {
                         final Venda venda = cell.getValue();
@@ -133,8 +136,6 @@ public class VendaController implements Initializable {
     public void tratarBotaoCadastrar(ActionEvent event) throws IOException {
         System.out.println("botao cadastrar");
         vendaSelecionada = null;
-        
-        //comboBoxAviao.setItems();
         
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(Passagens.class.getResource("/view/PainelFormularioVenda.fxml"));
@@ -170,12 +171,12 @@ public class VendaController implements Initializable {
     public void tratarBotaoRemover(ActionEvent event) throws IOException {
         Venda vendaSelec = tableViewVendas.getSelectionModel().getSelectedItem();
         if (vendaSelec != null) {
-            /*try {
+            try {
                 vendaNegocio.deletar(vendaSelec);
                 this.carregarTableViewVendas();
             } catch (NegocioException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
-            }*/
+            }
         } else {
             PrintUtil.printMessageError("Precisa selecionar um venda para esta opcao");
         }
@@ -187,13 +188,10 @@ public class VendaController implements Initializable {
         
         if(vendaSelecionada == null) //Se for cadastrar
         {
-            /*try {
+            try {
                 
                 int idCliente = Integer.parseInt(textFieldCliente.getText());
                 int idVoo = Integer.parseInt(textFieldVoo.getText());
-                
-                DateFormat format = new SimpleDateFormat("kk:mm - dd/MM/yyyy");
-                Date horario = format.parse(textFieldHorario.getText());
                 
                 // pegar aviao por id
                 //int idAviao = Integer.parseInt(textFieldAviao.getText());
@@ -202,26 +200,33 @@ public class VendaController implements Initializable {
                 //String nomeAviao = comboBoxAviao.getSelectionModel().getSelectedItem();
                 //Aviao a = aviaoDao.procurarPorNome(nomeAviao);
                 
+                Cliente c = clienteDao.procurarPorId(idCliente);
+                Voo v = vooDao.procurarPorId(idVoo);
                 
-                vendaNegocio.salvar(new Venda(clienteDao.procurarPorId(idCliente), vooDao.procurarPorId(idVoo), horario));
+                vendaNegocio.salvar(new Venda(c, v, new Date()));
                 
                 stage.close();
-            } catch (NegocioException | ParseException ex) {
+            } catch (NegocioException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
-            }*/
+            }
             
         }
         else //Se for editar
         {
-            /*try {
-                vendaSelecionada.setCliente(clienteDao.procurarPorId(Integer.parseInt(textFieldCliente.getText())));
-                vendaSelecionada.setVoo(vooDao.procurarPorId(Integer.parseInt(textFieldVoo.getText())));
+            try {
+                
+                vendaSelecionada.setCliente(
+                        clienteDao.procurarPorId( Integer.parseInt(textFieldCliente.getText()) )
+                );
+                vendaSelecionada.setVoo(
+                        vooDao.procurarPorId( Integer.parseInt(textFieldVoo.getText()) )
+                );
 
                 vendaNegocio.atualizar(vendaSelecionada);
                 stage.close();
             } catch (NegocioException ex) {
                 PrintUtil.printMessageError(ex.getMessage());
-            }*/
+            }
             
         } 
     }
