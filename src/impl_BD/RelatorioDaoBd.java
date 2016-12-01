@@ -6,12 +6,12 @@
 package impl_BD;
 
 import dao.RelatorioDao;
+import dominio.Aviao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import dominio.Cliente;
 
 /**
  *
@@ -197,7 +197,35 @@ public class RelatorioDaoBd implements RelatorioDao{
         }
         return null;
     }
+    
+    public int nVoosPorAviao(Aviao a){
+        String sql = "SELECT COUNT(id_voo) AS voos FROM voo "
+                + "WHERE id_aviao = ?";
 
+        try{
+            conectar(sql);
+            
+            comando.setInt(1, a.getId());
+            System.out.println(comando);
+            
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                int voos = resultado.getInt("voos");
+                return voos;
+            }
+            
+            
+        }catch(SQLException ex){
+            System.out.println(ex.getMessage());
+            System.err.println("Erro de Sistema - Problema ao buscar os Voos do Banco de Dados!");
+            throw new BDException(ex);
+        }finally{
+            fecharConexao();
+        }
+        return 0;
+        
+    }
 
+    
     
 }

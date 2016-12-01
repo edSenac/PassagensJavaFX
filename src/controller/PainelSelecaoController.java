@@ -67,4 +67,9 @@ public class PainelSelecaoController implements Initializable {
         abrePainel("/view/PainelTabelaVenda.fxml");
     }
     
+    public void abreRelatorio(ActionEvent event) throws IOException {
+        System.out.println("Abrindo Relatorios");
+        abrePainel("/view/PainelGraph.fxml");
+    }
+    
 }

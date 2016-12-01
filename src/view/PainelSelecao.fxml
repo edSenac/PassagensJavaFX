@@ -34,5 +34,6 @@
             <Font size="27.0" />
          </font>
       </Label>
+      <Button layoutX="274.0" layoutY="302.0" mnemonicParsing="false" onAction="#abreRelatorio" text="Relatório" />
    </children>
 </AnchorPane>

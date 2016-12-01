@@ -5,6 +5,8 @@
  */
 package dao;
 
+import dominio.Aviao;
+
 /**
  *
  * @author Eduardo
@@ -14,4 +16,6 @@ public interface RelatorioDao {
     public String porPassageiro(int id);
     public String porOrigem(String origem);
     public String porDestino(String destino);
+
+    public int nVoosPorAviao(Aviao aviao);
 }
